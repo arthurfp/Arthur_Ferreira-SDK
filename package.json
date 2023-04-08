@@ -4,14 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prettier": "prettier --check --config ./.prettierrc \"src/**/*.{js,jsx,ts,tsx,css,md,json}\" \"tests/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "prettier:fix": "prettier --write --config ./.prettierrc \"src/**/*.{js,jsx,ts,tsx,css,md,json}\" \"tests/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx,json}\" \"tests/**/*.{js,jsx,ts,tsx,json}\"",
     "eslint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx,json}\" \"tests/**/*.{js,jsx,ts,tsx,json}\"",
     "lint": "npm run prettier && npm run eslint",
-    "lint:fix": "npm run eslint:fix && npm run prettier:fix"
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "test": "jest"
   },
   "keywords": [],
   "author": "Arthur Ferreira",
@@ -24,6 +23,8 @@
     "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
+    "axios-mock-adapter": "^1.21.4",
+    "dotenv": "^16.0.3",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-typescript": "^3.5.5",
