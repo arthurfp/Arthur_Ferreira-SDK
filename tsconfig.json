@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "commonJS",
     "strict": true,
     "outDir": "dist",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noImplicitAny": true, // Compiler complains about expressions implicitly typed as 'any'
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules"],
 }
