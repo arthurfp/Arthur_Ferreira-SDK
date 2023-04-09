@@ -2,6 +2,8 @@
 
 Hey there! This awesome SDK makes it super easy to access the Lord of the Rings API. You can grab movie info and quotes in no time. And guess what? We designed it using a clean architecture pattern, which means it's super scalable and maintainable!
 
+**NPM Package:** https://www.npmjs.com/package/arthur_ferreira-sdk
+
 <br/>
 
 ## Table of Contents
