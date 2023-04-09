@@ -1,6 +1,6 @@
 {
   "name": "arthur_ferreira-sdk",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "A simple and convenient SDK to access the Lord of the Rings API.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

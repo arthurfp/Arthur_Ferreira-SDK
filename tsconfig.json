@@ -10,5 +10,5 @@
     "noImplicitAny": true, // Compiler complains about expressions implicitly typed as 'any'
   },
   "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules", "dist", "lib", "**/*spec.ts"]
+  "exclude": ["node_modules", "dist", "**/*spec.ts"]
 }
