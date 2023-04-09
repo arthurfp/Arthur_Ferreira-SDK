@@ -27,19 +27,52 @@ export class MovieRepositoryImplementation implements MovieRepository {
   }
 
   async getMovies(): Promise<Movie[]> {
-    const response = await this.axiosInstance.get('/movie');
-    return response.data.docs.map((movie: any) => this.mapMovie(movie));
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await this.axiosInstance.get('/movie');
+        if (response.status !== 200 || !response.data?.docs) {
+          reject(new Error("Unexpected API response format"));
+        }
+        resolve(response.data.docs.map((movie: any) => this.mapMovie(movie)));
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          reject(new Error(`Failed to fetch movies from API: ${error.message}`));
+        }
+      }
+    });
   }
 
-  async getMovieById(movieId: string): Promise<Movie | null> {
-    const response = await this.axiosInstance.get(`/movie/${movieId}`);
-    const movieData = response.data;
-    return movieData ? this.mapMovie(movieData) : null;
+  async getMovieById(movieId: string): Promise<Movie | null>  {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await this.axiosInstance.get(`/movie/${movieId}`);
+        if (response.status !== 200 || !response.data?.docs) {
+          reject(new Error("Unexpected API response format"));
+        }
+        const movieData = response.data.docs;
+        resolve(movieData.length ? this.mapMovie(movieData[0]) : null);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          reject(new Error(`Failed to fetch movie from API: ${error.message}`));
+        }
+      }
+    });
   }
 
   async getMovieQuotes(movieId: string): Promise<Quote[]> {
-    const response = await this.axiosInstance.get(`/movie/${movieId}/quote`);
-    return response.data.docs.map((quote: any) => this.mapQuote(quote));
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await this.axiosInstance.get(`/movie/${movieId}/quote`);
+        if (response.status !== 200 || !response.data?.docs) {
+          reject(new Error("Unexpected API response format"));
+        }
+        resolve(response.data.docs.map((quote: any) => this.mapQuote(quote)));
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          reject(new Error(`Failed to fetch quotes from API: ${error.message}`));
+        }
+      }
+    });
   }
 
   private mapMovie(movieData: any): Movie {

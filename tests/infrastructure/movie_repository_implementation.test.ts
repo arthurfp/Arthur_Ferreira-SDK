@@ -3,6 +3,10 @@ import MockAdapter from 'axios-mock-adapter';
 import { MovieRepositoryImplementation } from '../../src/infrastructure/movie_repository_implementation';
 
 const mockAxios = new MockAdapter(axios);
+const movieRepository = new MovieRepositoryImplementation({
+  apiBaseUrl: process.env.API_BASE_URL,
+  apiKey: process.env.API_KEY || '',
+});
 
 const movieData = [
   {
@@ -40,25 +44,56 @@ describe('MovieRepositoryImplementation', () => {
   it('fetches movies successfully', async () => {
     mockAxios.onGet('/movie').reply(200, { docs: movieData });
 
-    const movieRepository = new MovieRepositoryImplementation({
-      apiBaseUrl: process.env.API_BASE_URL,
-      apiKey: process.env.API_KEY || '',
-    });
-
     const movies = await movieRepository.getMovies();
     expect(movies).toHaveLength(2);
+  });
+
+  it('fetches movie by id successfully', async () => {
+    const movieId = '1';
+    mockAxios.onGet(`/movie/${movieId}`).reply(200, { docs: [movieData[0]] });
+
+    const movie = await movieRepository.getMovieById(movieId);
+
+    const  {_id, ...mockMovieData } = movieData[0];
+
+    const mockMovie = {
+      id: _id,
+      ...mockMovieData
+    };
+
+    expect(movie).toMatchObject(mockMovie);
   });
 
   it('fetches movie quotes successfully', async () => {
     const movieId = '1';
     mockAxios.onGet(`/movie/${movieId}/quote`).reply(200, { docs: quoteData });
 
-    const movieRepository = new MovieRepositoryImplementation({
-      apiBaseUrl: process.env.API_BASE_URL,
-      apiKey: process.env.API_KEY || '',
-    });
-
     const quotes = await movieRepository.getMovieQuotes(movieId);
     expect(quotes).toHaveLength(2);
+  });
+
+  it("should throw an error when the API returns a non-200 status code", async () => {
+    mockAxios.onGet().reply(500, {
+      success: false,
+      message: "Something went wrong."
+    });
+
+    await expect(movieRepository.getMovies()).rejects.toThrow("Failed to fetch movies from API");
+
+    await expect(movieRepository.getMovieById("5cd95395de30eff6ebccde56")).rejects.toThrow("Failed to fetch movie from API");
+
+    await expect(movieRepository.getMovieQuotes("5cd95395de30eff6ebccde56")).rejects.toThrow("Failed to fetch quotes from API");
+  });
+
+  it("should throw an error when the API response data is not in the expected format", async () => {
+    mockAxios.onGet().reply(200, {
+      unexpectedKey: [{ unexpectedKey: "unexpectedValue" }]
+    });
+
+    await expect(movieRepository.getMovies()).rejects.toThrow("Unexpected API response format");
+
+    await expect(movieRepository.getMovieById("5cd95395de30eff6ebccde56")).rejects.toThrow("Unexpected API response format");
+
+    await expect(movieRepository.getMovieQuotes("5cd95395de30eff6ebccde56")).rejects.toThrow("Unexpected API response format");
   });
 });

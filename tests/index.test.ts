@@ -3,6 +3,11 @@ import MockAdapter from 'axios-mock-adapter';
 import { MovieController, MovieRepositoryImplementation } from '../src';
 
 const mockAxios = new MockAdapter(axios);
+const movieRepository = new MovieRepositoryImplementation({
+  apiBaseUrl: process.env.API_BASE_URL,
+  apiKey: process.env.API_KEY || '',
+});
+const movieController = new MovieController({ movieRepository });
 
 const movieData = [
   {
@@ -40,26 +45,30 @@ describe('SDK Main Entry Point', () => {
   it('fetches movies successfully', async () => {
     mockAxios.onGet('/movie').reply(200, { docs: movieData });
 
-    const movieRepository = new MovieRepositoryImplementation({
-      apiBaseUrl: process.env.API_BASE_URL,
-      apiKey: process.env.API_KEY || '',
-    });
-
-    const movieController = new MovieController({ movieRepository });
     const movies = await movieController.getMovies();
     expect(movies).toHaveLength(2);
+  });
+
+  it('fetches movie by id successfully', async () => {
+    const movieId = '1';
+    mockAxios.onGet(`/movie/${movieId}`).reply(200, { docs: [movieData[0]] });
+
+    const movie = await movieController.getMovieById(movieId);
+    
+    const  {_id, ...mockMovieData } = movieData[0];
+
+    const mockMovie = {
+      id: _id,
+      ...mockMovieData
+    };
+
+    expect(movie).toMatchObject(mockMovie);
   });
 
   it('fetches movie quotes successfully', async () => {
     const movieId = '1';
     mockAxios.onGet(`/movie/${movieId}/quote`).reply(200, { docs: quoteData });
 
-    const movieRepository = new MovieRepositoryImplementation({
-      apiBaseUrl: process.env.API_BASE_URL,
-      apiKey: process.env.API_KEY || '',
-    });
-
-    const movieController = new MovieController({ movieRepository });
     const quotes = await movieController.getMovieQuotes(movieId);
     expect(quotes).toHaveLength(2);
   });

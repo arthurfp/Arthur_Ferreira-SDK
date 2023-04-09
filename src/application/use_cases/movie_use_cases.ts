@@ -10,6 +10,14 @@ export class GetMovies {
   }
 }
 
+export class GetMovieById {
+  constructor(private movieRepository: MovieRepository) {}
+
+  async execute(movieId: string): Promise<Movie | null> {
+    return this.movieRepository.getMovieById(movieId);
+  }
+}
+
 export class GetMovieQuotes {
   constructor(private movieRepository: MovieRepository) {}
 
